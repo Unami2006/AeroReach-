@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AeroReach — Responder Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- MapLibre -->
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+
+<style>
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:#020617;
+    color:#e5e7eb;
+  }
+
+  .topbar{
+    padding:14px 20px;
+    border-bottom:1px solid #111827;
+    background:#020617;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .topbar-title{
+    font-weight:700;
+    font-size:18px;
+    color:#60a5fa;
+  }
+  .topbar-sub{
+    font-size:12px;
+    color:#94a3b8;
+  }
+
+  .layout{
+    display:flex;
+    height:calc(100vh - 54px);
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width:280px;
+    background:#020617;
+    border-right:1px solid #111827;
+    padding:10px;
+    overflow-y:auto;
+  }
+  .sidebar-title{
+    font-size:13px;
+    text-transform:uppercase;
+    color:#64748b;
+    margin-bottom:6px;
+    letter-spacing:.08em;
+  }
+  .alert-card{
+    background:#020617;
+    border-radius:14px;
+    border:1px solid #1e293b;
+    padding:10px 12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .alert-card:hover{
+    border-color:#3b82f6;
+    background:#020818;
+  }
+  .alert-header{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+  }
+  .alert-type{
+    font-weight:600;
+    color:#e5e7eb;
+  }
+  .alert-status{
+    font-size:11px;
+  }
+  .alert-meta{
+    margin-top:4px;
+    font-size:11px;
+    color:#9ca3af;
+  }
+
+  /* Main */
+  .main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    background:#030712;
+  }
+
+  #map{
+    height:60%;
+    border-bottom:1px solid #111827;
+  }
+
+  .info-panel{
+    flex:1;
+    padding:14px 18px;
+    display:flex;
+    gap:20px;
+  }
+
+  .info-left{
+    flex:1.3;
+  }
+  .info-right{
+    width:260px;
+    background:#020617;
+    border-radius:14px;
+    border:1px solid #111827;
+    padding:12px 14px;
+  }
+
+  .info-title{
+    font-size:15px;
+    font-weight:600;
+    margin-bottom:8px;
+    color:#e5e7eb;
+  }
+  .info-grid{
+    font-size:13px;
+  }
+  .info-row{
+    margin:3px 0;
+  }
+  .label{
+    color:#64748b;
+    margin-right:4px;
+  }
+  .value{
+    color:#e5e7eb;
+  }
+
+  .status-pill{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:600;
+  }
+
+  .btn-row{
+    margin-top:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .btn{
+    padding:8px 12px;
+    border-radius:999px;
+    border:none;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    background:#1f2937;
+    color:#e5e7eb;
+  }
+  .btn-primary{
+    background:#2563eb;
+    color:white;
+  }
+  .btn-primary:hover{ background:#1d4ed8; }
+
+  .btn:hover{
+    background:#111827;
+  }
+
+  select{
+    width:100%;
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid #1e293b;
+    background:#020617;
+    color:#e5e7eb;
+    font-size:13px;
+    margin-top:6px;
+  }
+
+  /* Surveillance Overlay */
+  #surveillanceOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.9);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:50;
+  }
+  #surveillanceOverlay video{
+    width:80%;
+    max-width:900px;
+    border-radius:16px;
+    border:2px solid #60a5fa;
+  }
+  .close-btn{
+    margin-top:16px;
+    padding:10px 16px;
+    border-radius:999px;
+    border:none;
+    font-weight:600;
+    font-size:14px;
+    background:#ef4444;
+    color:white;
+    cursor:pointer;
+  }
+  .close-btn:hover{ background:#dc2626; }
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-title">AeroReach Responder Console</div>
+    <div class="topbar-sub">Princess Marina Hub • Live drone dispatch</div>
+  </div>
+  <div class="topbar-sub">Status: Online</div>
+</div>
+
+<div class="layout">
+  <!-- Sidebar with alerts -->
+  <div class="sidebar">
+    <div class="sidebar-title">Incoming Alerts</div>
+    <div id="alertList">Loading alerts…</div>
+  </div>
+
+  <!-- Main area -->
+  <div class="main">
+    <div id="map"></div>
+
+    <div class="info-panel">
+      <div class="info-left">
+        <div class="info-title">Active emergency</div>
+        <div class="info-grid">
+          <div class="info-row"><span class="label">User:</span> <span class="value" id="iUser">—</span></div>
+          <div class="info-row"><span class="label">Village:</span> <span class="value" id="iVillage">—</span></div>
+          <div class="info-row"><span class="label">Type:</span> <span class="value" id="iType">—</span></div>
+          <div class="info-row"><span class="label">Safety:</span> <span class="value" id="iSafe">—</span></div>
+          <div class="info-row"><span class="label">Status:</span>
+            <span id="iStatus" class="status-pill" style="background:#374151;color:#e5e7eb;">None</span>
+          </div>
+          <div class="info-row"><span class="label">ETA:</span> <span class="value" id="iEta">—</span></div>
+          <div class="info-row"><span class="label">Coordinates:</span> <span class="value" id="iCoords">—</span></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="dispatchDrone()">Dispatch Drone</button>
+          <button class="btn" onclick="setStatus('En Route')">Mark En Route</button>
+          <button class="btn" onclick="setStatus('Arrived')">Mark Arrived</button>
+          <button class="btn" onclick="setStatus('Closed')">Close Case</button>
+        </div>
+      </div>
+
+      <div class="info-right">
+        <div class="info-title">Surveillance Mode</div>
+        <div style="font-size:12px;color:#9ca3af;margin-bottom:6px;">
+          Simulated drone camera feed for situational awareness.
+        </div>
+        <label style="font-size:12px;">Camera Pattern</label>
+        <select id="survMode">
+          <option value="search">Thermal Search</option>
+          <option value="scan">Wide Area Scan</option>
+          <option value="enroute">En Route View</option>
+          <option value="landing">Landing Sequence</option>
+        </select>
+        <button class="btn btn-primary" style="margin-top:10px;" onclick="openSurveillance()">Open Camera</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Surveillance Overlay -->
+<div id="surveillanceOverlay">
+  <video id="droneVideo" autoplay muted loop>
+    <source id="droneVideoSource" src="drone_search.mp4" type="video/mp4">
+  </video>
+  <button class="close-btn" onclick="closeSurveillance()">Close Surveillance</button>
+</div>
+
+<!-- Firebase v8 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+/* -----------------------------
+   Firebase init
+------------------------------*/
+const firebaseConfig = {
+  apiKey: "AIzaSyDgEH4QnHBLWzg54MNexYZJaATpRHFC_DA",
+  authDomain: "aeroreach-5d4ae.firebaseapp.com",
+  databaseURL: "https://aeroreach-5d4ae-default-rtdb.firebaseio.com",
+  projectId: "aeroreach-5d4ae",
+  storageBucket: "aeroreach-5d4ae.appspot.com",
+  messagingSenderId: "477756305528",
+  appId: "1:477756305528:web:470f50f591bee98e3e3d8d"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* -----------------------------
+   Globals
+------------------------------*/
+const HUB = { lat:-24.656944, lng:25.923889 }; // Princess Marina
+let map;
+let alerts = [];
+let selectedAlert = null;
+let droneMarker = null;
+let hubMarker = null;
+let userMarker = null;
+let droneInterval = null;
+let currentDest = null;
+
+/* -----------------------------
+   Init map
+------------------------------*/
+map = new maplibregl.Map({
+  container: 'map',
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [HUB.lng, HUB.lat],
+  zoom: 6
+});
+
+/* -----------------------------
+   Load alerts from Firebase
+------------------------------*/
+const alertListEl = document.getElementById("alertList");
+
+db.ref("alerts").orderByChild("createdAt").on("value", snap=>{
+  alerts = [];
+  snap.forEach(ch=>{
+    alerts.push({id: ch.key, ...ch.val()});
+  });
+  alerts.reverse(); // newest first
+  renderAlertList();
+});
+
+function statusColor(status){
+  switch(status){
+    case "Pending": return "#f97316";
+    case "Drone Dispatched": return "#3b82f6";
+    case "En Route": return "#eab308";
+    case "Arrived": return "#22c55e";
+    case "Closed": return "#6b7280";
+    default: return "#4b5563";
+  }
+}
+
+function renderAlertList(){
+  if(!alerts.length){
+    alertListEl.innerHTML = "<div style='font-size:12px;color:#64748b;'>No active alerts.</div>";
+    return;
+  }
+  alertListEl.innerHTML = "";
+  alerts.forEach(a=>{
+    const card = document.createElement("div");
+    card.className = "alert-card";
+    card.onclick = ()=>selectAlert(a.id);
+
+    const st = a.status || "Pending";
+    const typeLabel = (a.emergencyType || "Unknown").toString().toUpperCase();
+
+    card.innerHTML = `
+      <div class="alert-header">
+        <div class="alert-type">${typeLabel}</div>
+        <div class="alert-status" style="color:${statusColor(st)};">${st}</div>
+      </div>
+      <div class="alert-meta">
+        Safety: ${a.safety || "N/A"} • ${a.gpsLocation ? "📍 GPS" : "No GPS"}
+      </div>
+    `;
+    alertListEl.appendChild(card);
+  });
+}
+
+/* -----------------------------
+   Select alert
+------------------------------*/
+async function selectAlert(id){
+  const found = alerts.find(a=>a.id === id);
+  if(!found) return;
+  selectedAlert = found;
+
+  // Load user profile
+  let userName = "Unknown";
+  let userVillage = "Unknown";
+  if(found.userId){
+    const snap = await db.ref("users/"+found.userId).once("value");
+    const d = snap.val();
+    if(d){
+      userName = d.name || "User";
+      userVillage = d.village || "—";
+    }
+  }
+
+  // Update info panel
+  document.getElementById("iUser").innerText    = userName;
+  document.getElementById("iVillage").innerText = userVillage;
+  document.getElementById("iType").innerText    = found.emergencyType || "—";
+  document.getElementById("iSafe").innerText    = found.safety || "—";
+
+  updateStatusUI(found.status || "Pending");
+
+  // Coordinates
+  let dest = null;
+  if(found.gpsLocation && typeof found.gpsLocation.lat === "number"){
+    dest = { lat: found.gpsLocation.lat, lng: found.gpsLocation.lng };
+  } else {
+    dest = { lat: HUB.lat + 0.15, lng: HUB.lng + 0.15 };
+  }
+  currentDest = dest;
+  document.getElementById("iCoords").innerText =
+    dest.lat.toFixed(4) + ", " + dest.lng.toFixed(4);
+
+  // Reset ETA
+  document.getElementById("iEta").innerText = "--";
+
+  // Update map markers
+  setupMapMarkers(dest);
+}
+
+/* -----------------------------
+   Map markers + drone
+------------------------------*/
+function setupMapMarkers(dest){
+  // Clear previous
+  if(hubMarker) hubMarker.remove();
+  if(userMarker) userMarker.remove();
+  if(droneMarker) droneMarker.remove();
+  if(droneInterval) clearInterval(droneInterval);
+
+  // Fit bounds
+  const bounds = new maplibregl.LngLatBounds();
+  bounds.extend([HUB.lng, HUB.lat]);
+  bounds.extend([dest.lng, dest.lat]);
+  map.fitBounds(bounds, {padding:60});
+
+  // Hub marker
+  hubMarker = new maplibregl.Marker({ color:'#22c55e' })
+    .setLngLat([HUB.lng, HUB.lat])
+    .addTo(map);
+
+  // User marker
+  userMarker = new maplibregl.Marker({ color:'#f97316' })
+    .setLngLat([dest.lng, dest.lat])
+    .addTo(map);
+
+  // Drone marker (starts at hub)
+  droneMarker = new maplibregl.Marker({ color:'#3b82f6' })
+    .setLngLat([HUB.lng, HUB.lat])
+    .addTo(map);
+}
+
+/* -----------------------------
+   Status helpers
+------------------------------*/
+function updateStatusUI(status){
+  const pill = document.getElementById("iStatus");
+  pill.innerText = status || "Pending";
+  pill.style.backgroundColor = statusColor(status || "Pending");
+}
+
+function pushStatusToDb(status){
+  if(!selectedAlert) return;
+  db.ref("alerts/"+selectedAlert.id+"/status").set(status);
+  selectedAlert.status = status;
+  updateStatusUI(status);
+  renderAlertList();
+}
+
+/* -----------------------------
+   Dispatch + Animate Drone
+------------------------------*/
+function dispatchDrone(){
+  if(!selectedAlert || !currentDest || !droneMarker) return;
+
+  pushStatusToDb("Drone Dispatched");
+  document.getElementById("iEta").innerText = "15 min";
+
+  let step = 0;
+  const total = 120;
+  let eta = 15;
+
+  if(droneInterval) clearInterval(droneInterval);
+
+  droneInterval = setInterval(()=>{
+    step++;
+
+    const t = step / total;
+    const lng = HUB.lng + (currentDest.lng - HUB.lng) * t;
+    const lat = HUB.lat + (currentDest.lat - HUB.lat) * t;
+    droneMarker.setLngLat([lng, lat]);
+
+    if(step % 8 === 0 && eta > 0){
+      eta--;
+      document.getElementById("iEta").innerText = eta + " min";
+    }
+
+    if(step === 40){
+      pushStatusToDb("En Route");
+    }
+
+    if(step >= total){
+      clearInterval(droneInterval);
+      pushStatusToDb("Arrived");
+      document.getElementById("iEta").innerText = "Arrived";
+    }
+  },250);
+}
+
+/* -----------------------------
+   Manual status buttons
+------------------------------*/
+function setStatus(status){
+  pushStatusToDb(status);
+  if((status === "Arrived" || status === "Closed") && droneInterval){
+    clearInterval(droneInterval);
+    document.getElementById("iEta").innerText = status === "Arrived" ? "Arrived" : "--";
+  }
+}
+
+/* -----------------------------
+   Surveillance Mode
+------------------------------*/
+function openSurveillance(){
+  const mode = document.getElementById("survMode").value;
+  const srcEl = document.getElementById("droneVideoSource");
+
+  if(mode === "search")  srcEl.src = "drone_search.mp4";
+  if(mode === "scan")    srcEl.src = "drone_scan.mp4";
+  if(mode === "enroute") srcEl.src = "drone_enroute.mp4";
+  if(mode === "landing") srcEl.src = "drone_landing.mp4";
+
+  document.getElementById("droneVideo").load();
+  document.getElementById("surveillanceOverlay").style.display = "flex";
+}
+
+function closeSurveillance(){
+  document.getElementById("surveillanceOverlay").style.display = "none";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AeroReach — Help En Route</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+
+<style>
+  :root{
+    --bg:#020617;
+    --panel:#0f172a;
+    --accent:#3b82f6;
+    --accent-soft:#60a5fa;
+    --text:#e5e7eb;
+    --muted:#9ca3af;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:radial-gradient(circle at top,#1e3a8a 0,#020617 55%);
+    font-family:"Inter",sans-serif;
+    color:var(--text);
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  #map{
+    flex:1;
+    width:100%;
+  }
+
+  /* STATUS PANEL */
+  .panel{
+    padding:18px 22px;
+    background:rgba(15,23,42,0.9);
+    border-top:1px solid rgba(148,163,184,.2);
+    backdrop-filter:blur(16px);
+  }
+
+  h2{
+    margin:0;
+    font-size:20px;
+    font-weight:700;
+    color:var(--accent-soft);
+  }
+
+  .sub{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+
+  .row{
+    margin-top:12px;
+    font-size:14px;
+    display:flex;
+    justify-content:space-between;
+  }
+
+  .label{
+    color:var(--muted);
+  }
+  .value{
+    font-weight:600;
+  }
+
+  button{
+    margin-top:14px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    font-size:15px;
+    background:linear-gradient(135deg,#2563eb,#1e3a8a);
+    color:white;
+    cursor:pointer;
+    box-shadow:0 0 28px rgba(59,130,246,.3);
+  }
+
+  button:hover{
+    opacity:.9;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<div class="panel">
+  <h2>🚁 Help is on the way</h2>
+  <div class="sub">The AeroReach drone is heading to your location.</div>
+
+  <div class="row">
+    <div class="label">Status</div>
+    <div class="value" id="statusText">Drone dispatched…</div>
+  </div>
+
+  <div class="row">
+    <div class="label">ETA</div>
+    <div class="value" id="etaText">Calculating…</div>
+  </div>
+
+  <button onclick="goBack()">Return to Dashboard</button>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+/* ---------------- Firebase ---------------- */
+const config = {
+  apiKey:"AIzaSyDgEH4QnHBLWzg54MNexYZJaATpRHFC_DA",
+  authDomain:"aeroreach-5d4ae.firebaseapp.com",
+  databaseURL:"https://aeroreach-5d4ae-default-rtdb.firebaseio.com",
+  projectId:"aeroreach-5d4ae",
+  storageBucket:"aeroreach-5d4ae.appspot.com",
+  messagingSenderId:"477756305528",
+  appId:"1:477756305528:web:470f50f591bee98e3e3d8d"
+};
+firebase.initializeApp(config);
+const db = firebase.database();
+
+/* ---------------- USER ---------------- */
+const uid = localStorage.getItem("uid");
+if(!uid) window.location="signup.html";
+
+/* ---------------- DISPATCH HUB ---------------- */
+const HUB = { lat:-24.656944, lng:25.923889 }; // Princess Marina
+
+let map, droneMarker, alertData;
+
+/* ---------------- Fetch Alert ---------------- */
+db.ref("alerts")
+  .orderByChild("userId")
+  .equalTo(uid)
+  .once("value",snap=>{
+    const arr = [];
+    snap.forEach(x=>arr.push({...x.val(), id:x.key}));
+    arr.sort((a,b)=>b.createdAt-a.createdAt);
+    alertData = arr[0];
+    initMap();
+    flyDrone();
+});
+
+/* ---------------- Map ---------------- */
+function initMap(){
+  map = new maplibregl.Map({
+    container:"map",
+    style:"https://demotiles.maplibre.org/style.json",
+    center:[HUB.lng,HUB.lat],
+    zoom:8
+  });
+
+  new maplibregl.Marker({color:"#22c55e"})
+    .setLngLat([HUB.lng,HUB.lat])
+    .addTo(map);
+
+  new maplibregl.Marker({color:"#f97316"})
+    .setLngLat([alertData.gpsLocation.lng,alertData.gpsLocation.lat])
+    .addTo(map);
+
+  droneMarker = new maplibregl.Marker({color:"#60a5fa"}) // nicer blue
+    .setLngLat([HUB.lng,HUB.lat])
+    .addTo(map);
+
+  const bounds = new maplibregl.LngLatBounds();
+  bounds.extend([HUB.lng,HUB.lat]);
+  bounds.extend([alertData.gpsLocation.lng,alertData.gpsLocation.lat]);
+  map.fitBounds(bounds,{padding:70});
+}
+
+/* ---------------- Animation ---------------- */
+function flyDrone(){
+  let step = 0;
+  const total = 100;
+  let eta = 12;
+
+  const ticker = setInterval(()=>{
+    step++;
+
+    const t = step / total;
+    const lat = HUB.lat + (alertData.gpsLocation.lat - HUB.lat)*t;
+    const lng = HUB.lng + (alertData.gpsLocation.lng - HUB.lng)*t;
+    droneMarker.setLngLat([lng,lat]);
+
+    if(step % 7 === 0 && eta > 0){
+      eta--;
+      etaText.innerText = eta + " min";
+    }
+
+    if(step >= total){
+      clearInterval(ticker);
+      statusText.innerText = "Drone Arrived ✔";
+      etaText.innerText = "Medical assistance is near.";
+    }
+  },200);
+}
+
+/* ---------------- Back ---------------- */
+function goBack(){
+  window.location="user-hub.html";
+}
+</script>
+</body>
+</html>

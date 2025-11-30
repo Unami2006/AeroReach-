@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AeroReach — Sign Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================================
+   GLOBAL
+=========================================================== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif;
+}
+
+body{
+  height:100vh;
+  width:100vw;
+  overflow:hidden;
+  background:radial-gradient(circle at top,#1e3a8a,#020617 65%);
+  color:#e2e8f0;
+  display:flex;
+  justify-content:center;
+}
+
+/* Container wrapper */
+.container{
+  width:100%;
+  max-width:480px;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===========================================================
+   HEADER
+=========================================================== */
+.hero{
+  padding:28px 20px 16px;
+  text-align:center;
+}
+
+.hero h2{
+  font-size:24px;
+  font-weight:700;
+  color:#60a5fa;
+}
+
+.hero small{
+  font-size:14px;
+  color:#94a3b8;
+}
+
+/* ===========================================================
+   CARD (content window)
+=========================================================== */
+.card{
+  flex:1;
+  background:rgba(15,23,42,0.82);
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  backdrop-filter:blur(8px);
+  padding:24px;
+  overflow-y:auto;
+  border-top:1px solid #1e293b;
+}
+
+/* ===========================================================
+   ROLE SELECTION GRID
+=========================================================== */
+.action-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:30px;
+}
+
+.action-box{
+  padding:18px;
+  border-radius:14px;
+  background:#1e293b;
+  text-align:center;
+  font-weight:600;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.25s;
+  border:1px solid transparent;
+}
+
+.action-box:hover{
+  border-color:#60a5fa;
+  color:#60a5fa;
+  background:#0f172a;
+}
+
+/* ===========================================================
+   FORMS
+=========================================================== */
+label{
+  font-size:14px;
+  font-weight:500;
+  margin-bottom:4px;
+  color:#cbd5e1;
+  display:block;
+}
+
+input,select{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #334155;
+  background:#0f172a;
+  color:white;
+  font-size:15px;
+  margin-bottom:14px;
+}
+
+/* ===========================================================
+   BUTTONS
+=========================================================== */
+.btn{
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  font-weight:600;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+.btn-primary{
+  background:#2563eb;
+  color:white;
+  box-shadow:0 0 12px rgba(37,99,235,.4);
+}
+.btn-primary:hover{
+  background:#1e40af;
+}
+
+.btn-secondary{
+  background:#1e293b;
+  color:#e2e8f0;
+  border:1px solid #334155;
+}
+.btn-secondary:hover{
+  background:#0f172a;
+}
+
+/* Keep it sexy on mobile */
+@media (max-width:420px){
+  .hero h2{font-size:21px;}
+  .btn{padding:13px;font-size:15px;}
+  input,select{font-size:14px;}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- TOP SECTION -->
+  <div class="hero">
+    <h2>Create your AeroReach account</h2>
+    <small>Who are you signing up as?</small>
+  </div>
+
+  <!-- ROLE SELECT -->
+  <div class="card" id="roleCard">
+    <div class="action-grid">
+      <div class="action-box" onclick="showUser()">🧍 User</div>
+      <div class="action-box" onclick="showResponder()">🚑 Responder</div>
+    </div>
+  </div>
+
+  <!-- USER FORM -->
+  <div class="card" id="userForm" style="display:none;">
+    <label>Full name</label>
+    <input id="uname">
+
+    <label>Age</label>
+    <input type="number" id="uage">
+
+    <label>Village / Area</label>
+    <input id="uvillage">
+
+    <label>Medical Focus</label>
+    <select id="umedical">
+      <option>Injury</option>
+      <option>Asthma</option>
+      <option>Medication Refill</option>
+      <option>Postpartum</option>
+      <option>Chronic</option>
+      <option>GBV</option>
+    </select>
+
+    <button class="btn btn-secondary" onclick="saveGPS()">📍 Save GPS</button>
+    <button class="btn btn-primary" onclick="signupUser()">Continue →</button>
+  </div>
+
+  <!-- RESPONDER FORM -->
+  <div class="card" id="respForm" style="display:none;">
+    <label>Name</label>
+    <input id="rname">
+
+    <label>Organization</label>
+    <input id="rorg">
+
+    <label>Role</label>
+    <input id="rrole">
+
+    <label>Email</label>
+    <input id="remail">
+
+    <button class="btn btn-primary" onclick="signupResponder()">Continue →</button>
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+const config = {
+  apiKey:"AIzaSyDgEH4QnHBLWzg54MNexYZJaATpRHFC_DA",
+  authDomain:"aeroreach-5d4ae.firebaseapp.com",
+  databaseURL:"https://aeroreach-5d4ae-default-rtdb.firebaseio.com",
+  projectId:"aeroreach-5d4ae",
+  storageBucket:"aeroreach-5d4ae.appspot.com",
+  messagingSenderId:"477756305528",
+  appId:"1:477756305528:web:470f50f591bee98e3e3d8d"
+};
+firebase.initializeApp(config);
+const db=firebase.database();
+const auth=firebase.auth();
+
+let gps=null;
+
+/* Switch Views */
+function showUser(){
+  roleCard.style.display="none";
+  userForm.style.display="block";
+}
+function showResponder(){
+  roleCard.style.display="none";
+  respForm.style.display="block";
+}
+
+/* GPS Capture */
+function saveGPS(){
+  navigator.geolocation.getCurrentPosition(pos=>{
+    gps={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    alert("📍 GPS saved");
+  });
+}
+
+/* USER SIGN UP */
+async function signupUser(){
+  const name=uname.value.trim();
+  const age=parseInt(uage.value);
+  const village=uvillage.value.trim();
+  const medical=umedical.value;
+
+  if(!name||!age||!village){
+    alert("Please fill all fields.");
+    return;
+  }
+
+  const cred=await auth.signInAnonymously();
+  const uid=cred.user.uid;
+
+  await db.ref("users/"+uid).set({
+    name,age,village,medical,gps,
+    createdAt:Date.now()
+  });
+
+  localStorage.setItem("uid",uid);
+  window.location="user-hub.html";
+}
+
+/* RESPONDER SIGN UP */
+async function signupResponder(){
+  const name=rname.value.trim();
+  const org=rorg.value.trim();
+  const role=rrole.value.trim();
+  const email=remail.value.trim();
+
+  if(!name||!org||!role||!email){
+    alert("Fill in all fields.");
+    return;
+  }
+
+  const cred=await auth.signInAnonymously();
+  const id=cred.user.uid;
+
+  await db.ref("responders/"+id).set({
+    name,org,role,email,
+    createdAt:Date.now()
+  });
+
+  localStorage.setItem("responder",id);
+  window.location="responder-dashboard.html";
+}
+</script>
+</body>
+</html>

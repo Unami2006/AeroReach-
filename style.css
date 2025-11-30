@@ -1,0 +1,170 @@
+/* ============================
+ GLOBAL SYSTEM UI
+ Fresh. Navy. Medical Tech
+============================*/
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html, body{
+  font-family:'Inter', sans-serif;
+  background:#f2f6ff;
+  color:#1f2937;
+  height:100%;
+}
+
+.container{
+  max-width:480px;
+  margin:auto;
+  padding:20px;
+}
+
+/* ====== CARDS ====== */
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  box-shadow:0 6px 22px rgba(0,0,0,.06);
+  margin-bottom:16px;
+}
+
+/* ====== BIG HEADER CARD ====== */
+.hero{
+  background:linear-gradient(135deg,#2563eb,#0b357b);
+  color:white;
+  padding:28px;
+  border-radius:20px;
+  box-shadow:0 10px 32px rgba(0,0,0,.25);
+  text-align:center;
+}
+
+/* ====== TITLES ====== */
+h1,h2,h3{
+  font-weight:700;
+}
+.subtitle{
+  font-size:14px;
+  color:#6b7280;
+}
+
+/* ====== BUTTONS ====== */
+.btn{
+  width:100%;
+  padding:14px;
+  margin-top:12px;
+  text-align:center;
+  font-weight:600;
+  border-radius:14px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.btn-primary{
+  background:#2563eb;
+  color:white;
+}
+.btn-primary:hover{
+  background:#1d4ed8;
+}
+
+.btn-secondary{
+  background:white;
+  border:1px solid #cfd4dd;
+}
+.btn-secondary:hover{
+  border-color:#2563eb;
+  color:#2563eb;
+}
+
+.btn-danger{
+  background:#ef4444;
+  color:white;
+  font-weight:700;
+}
+.btn-danger:hover{
+  background:#dc2626;
+}
+
+/* ====== INPUTS ====== */
+label{
+  font-size:13px;
+  color:#374151;
+  margin-top:10px;
+  display:block;
+}
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #d1d5db;
+  margin-top:6px;
+  font-size:14px;
+  background:white;
+}
+input:focus,select:focus{
+  outline:none;
+  border-color:#2563eb;
+  box-shadow:0 0 0 2px rgba(37,99,235,.2)
+}
+
+/* ====== OPTION BOX (Emergency Steps) ====== */
+.option{
+  padding:14px;
+  background:#f3f4f6;
+  border-radius:14px;
+  cursor:pointer;
+  margin-bottom:8px;
+  font-weight:600;
+  transition:.25s;
+}
+.option:hover{
+  border:1px solid #2563eb;
+  color:#2563eb;
+  transform:translateY(-2px);
+}
+
+/* ====== STATUS ====== */
+.status{
+  background:white;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  text-align:center;
+  font-weight:600;
+}
+
+/* ====== GRID ====== */
+.action-grid{
+  display:grid;
+  gap:10px;
+}
+.action-box{
+  background:white;
+  padding:14px;
+  border-radius:14px;
+  font-weight:600;
+  border:1px solid #e5e7eb;
+  text-align:center;
+  cursor:pointer;
+  transition:.25s;
+}
+.action-box:hover{
+  border-color:#2563eb;
+  color:#2563eb;
+}
+
+/* ====== MOBILE ====== */
+@media(max-width:520px){
+  .container{
+    padding:14px;
+  }
+  .card{
+    padding:14px;
+  }
+  .hero{
+    padding:20px;
+  }
+}
