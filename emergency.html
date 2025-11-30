@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Active - AeroReach</title>
+  <meta name="description" content="Emergency response in progress - Help is on the way">
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="emergency">
+  <div class="emergency-page">
+    <!-- Pulsing Background -->
+    <div class="emergency-bg-pulse"></div>
+
+    <div class="emergency-content">
+      <!-- Active Banner -->
+      <div class="emergency-active-banner">
+        <div class="pulse-dot"></div>
+        <span>EMERGENCY ACTIVE</span>
+      </div>
+
+      <!-- Help Card -->
+      <div class="card card-glow help-card">
+        <div class="drone-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="32" cy="8" rx="12" ry="3" fill="currentColor" opacity="0.3"/>
+            <ellipse cx="32" cy="56" rx="12" ry="3" fill="currentColor" opacity="0.3"/>
+            <ellipse cx="8" cy="32" rx="3" ry="12" fill="currentColor" opacity="0.3"/>
+            <ellipse cx="56" cy="32" rx="3" ry="12" fill="currentColor" opacity="0.3"/>
+            <line x1="32" y1="12" x2="32" y2="24" stroke="currentColor" stroke-width="2"/>
+            <line x1="32" y1="40" x2="32" y2="52" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="32" x2="24" y2="32" stroke="currentColor" stroke-width="2"/>
+            <line x1="40" y1="32" x2="52" y2="32" stroke="currentColor" stroke-width="2"/>
+            <rect x="24" y="24" width="16" height="16" rx="4" fill="currentColor"/>
+            <circle cx="32" cy="32" r="4" fill="white"/>
+          </svg>
+        </div>
+
+        <h1>Help is on the way!</h1>
+
+        <div class="eta-display">
+          <span class="eta-label">Estimated Time of Arrival</span>
+          <div>
+            <span class="eta-time" id="etaTime">8</span>
+            <span class="eta-unit">minutes</span>
+          </div>
+        </div>
+
+        <div class="location-display">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span id="userLocation">Your location</span>
+        </div>
+      </div>
+
+      <!-- Tips Card -->
+      <div class="card tips-card">
+        <h2>While You Wait - Important Tips</h2>
+        <ul class="tips-list" id="tipsList">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+
+      <!-- Call 911 -->
+      <a href="tel:911" class="call-911-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        Call Emergency: 911
+      </a>
+
+      <!-- Status Timeline -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Status Updates</h3>
+        <div class="status-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot active"></div>
+            <div class="timeline-content">
+              <h4>Request Received</h4>
+              <p>Your emergency request has been processed</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot current"></div>
+            <div class="timeline-content">
+              <h4>Drone Dispatched</h4>
+              <p>Medical drone en route to your location</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Arriving Soon</h4>
+              <p>Drone approaching destination</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <h4>Delivered</h4>
+              <p>Medical supplies delivered</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

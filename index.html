@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroReach - Emergency Medical Drone Dispatch</title>
+  <meta name="description" content="AeroReach EMS - Advanced drone dispatch technology for emergency medical supply delivery. Fast, reliable emergency response.">
+  <meta name="author" content="AeroReach">
+  <meta name="keywords" content="EMS, drone, emergency, medical, dispatch, healthcare, ambulance, first response">
+  
+  <meta property="og:title" content="AeroReach - Emergency Medical Drone Dispatch">
+  <meta property="og:description" content="Advanced drone dispatch technology for emergency medical supply delivery.">
+  <meta property="og:type" content="website">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@AeroReach">
+  
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="landing-page">
+    <!-- Background Effects -->
+    <div class="bg-effects">
+      <div class="bg-blob bg-blob-1"></div>
+      <div class="bg-blob bg-blob-2"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="landing-content">
+      <!-- Logo -->
+      <div class="logo-section">
+        <div class="drone-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="32" cy="8" rx="12" ry="3" fill="currentColor" opacity="0.3"/>
+            <ellipse cx="32" cy="56" rx="12" ry="3" fill="currentColor" opacity="0.3"/>
+            <ellipse cx="8" cy="32" rx="3" ry="12" fill="currentColor" opacity="0.3"/>
+            <ellipse cx="56" cy="32" rx="3" ry="12" fill="currentColor" opacity="0.3"/>
+            <line x1="32" y1="12" x2="32" y2="24" stroke="currentColor" stroke-width="2"/>
+            <line x1="32" y1="40" x2="32" y2="52" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="32" x2="24" y2="32" stroke="currentColor" stroke-width="2"/>
+            <line x1="40" y1="32" x2="52" y2="32" stroke="currentColor" stroke-width="2"/>
+            <rect x="24" y="24" width="16" height="16" rx="4" fill="currentColor"/>
+            <circle cx="32" cy="32" r="4" fill="white"/>
+          </svg>
+        </div>
+        <h1 class="logo-title">AeroReach</h1>
+        <p class="logo-tagline">Emergency Medical Drone Dispatch System</p>
+      </div>
+
+      <!-- Portal Cards -->
+      <div class="portal-cards">
+        <!-- User Portal -->
+        <div class="card portal-card">
+          <div class="card-icon user-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h2 class="card-title">User Portal</h2>
+          <p class="card-description">Request emergency drone assistance for medical supplies</p>
+          <a href="user-login.html" class="btn btn-primary">Login as User</a>
+        </div>
+
+        <!-- Responder Portal -->
+        <div class="card portal-card">
+          <div class="card-icon responder-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h2 class="card-title">Responder Portal</h2>
+          <p class="card-description">Access drone dispatch dashboard and monitoring</p>
+          <a href="responder-login.html" class="btn btn-secondary">Login as Responder</a>
+        </div>
+      </div>
+
+      <!-- Emergency Banner -->
+      <a href="user-request.html?emergency=true" class="emergency-banner">
+        <div class="emergency-pulse"></div>
+        <span class="emergency-text">🚨 EMERGENCY - Click here for immediate assistance</span>
+      </a>
+    </main>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <p>&copy; 2024 AeroReach EMS. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

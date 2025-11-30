@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Assistance - AeroReach</title>
+  <meta name="description" content="Submit a request for emergency medical drone assistance">
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-page="user-request">
+  <div class="request-page">
+    <div class="request-container">
+      <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Home
+      </a>
+
+      <div class="request-header">
+        <h1 class="request-title">Request Medical Assistance</h1>
+        <p class="request-subtitle">Fill in the details below to request drone-delivered medical supplies</p>
+      </div>
+
+      <div class="card card-glow">
+        <form id="requestForm">
+          <!-- Personal Information -->
+          <div class="form-section">
+            <h2 class="form-section-title">Personal Information</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="name">Full Name *</label>
+                <input type="text" id="name" class="form-input" placeholder="Enter your name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="age">Age *</label>
+                <input type="number" id="age" class="form-input" placeholder="Age" min="0" max="150" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="form-section">
+            <h2 class="form-section-title">Location</h2>
+            <div class="form-group">
+              <label class="form-label" for="location">Address / Location Description *</label>
+              <input type="text" id="location" class="form-input" placeholder="Enter your address or describe your location" required>
+            </div>
+          </div>
+
+          <!-- Injury Information -->
+          <div class="form-section">
+            <h2 class="form-section-title">Injury Information</h2>
+            <div class="form-group">
+              <label class="form-label" for="injuryCategory">Injury Category *</label>
+              <select id="injuryCategory" class="form-select" required>
+                <option value="">Select a category</option>
+                <option value="trauma">Physical Trauma</option>
+                <option value="postpartum">Postpartum</option>
+                <option value="gbv">GBV Emergency</option>
+                <option value="chronic">Chronic Condition</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Injury Type *</label>
+              <div id="injuryTypeContainer">
+                <p style="color: var(--muted-foreground); font-size: 0.875rem;">Please select a category first</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="description">Additional Details (Optional)</label>
+              <textarea id="description" class="form-textarea" placeholder="Describe the injury or situation in more detail..."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">Submit Request</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dispatch Modal -->
+  <div id="dispatchModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-icon">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="32" cy="8" rx="12" ry="3" fill="currentColor" opacity="0.3"/>
+          <ellipse cx="32" cy="56" rx="12" ry="3" fill="currentColor" opacity="0.3"/>
+          <ellipse cx="8" cy="32" rx="3" ry="12" fill="currentColor" opacity="0.3"/>
+          <ellipse cx="56" cy="32" rx="3" ry="12" fill="currentColor" opacity="0.3"/>
+          <line x1="32" y1="12" x2="32" y2="24" stroke="currentColor" stroke-width="2"/>
+          <line x1="32" y1="40" x2="32" y2="52" stroke="currentColor" stroke-width="2"/>
+          <line x1="12" y1="32" x2="24" y2="32" stroke="currentColor" stroke-width="2"/>
+          <line x1="40" y1="32" x2="52" y2="32" stroke="currentColor" stroke-width="2"/>
+          <rect x="24" y="24" width="16" height="16" rx="4" fill="currentColor"/>
+          <circle cx="32" cy="32" r="4" fill="white"/>
+        </svg>
+      </div>
+      <h2 class="modal-title">Drone Dispatched!</h2>
+      <p class="modal-message">
+        A medical drone has been dispatched to your location. 
+        <strong>Estimated arrival: 5-8 minutes</strong>
+      </p>
+      <button class="btn btn-primary btn-full modal-close-btn">Track Emergency</button>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
